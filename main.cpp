@@ -8,7 +8,7 @@
 
 Serializing::Data makeData(int multiplier, const QString &firstName, const QString & secondName)
 {
-    int initValue = 1 * multiplier;
+    int initValue = multiplier;
     Serializing::Data data;
 
     data.posx = initValue;
