@@ -1,6 +1,10 @@
 #include <QString>
 #include "Serializing/dataserializer.h"
 #include "Serializing/data.h"
+#include <iostream>
+#include <fstream>
+#include <QDataStream>
+#include <QFile>
 
 Serializing::Data makeData(int multiplier, const QString &firstName, const QString & secondName)
 {
@@ -34,9 +38,9 @@ Serializing::Data makeData(int multiplier, const QString &firstName, const QStri
 int main()
 {
     Serializing::DataSerializer serializer;
-    const QString fileName{"storedData"};
+    const QString fileName{"d:\\Askmem_3\\NV\\data\\vv1.dat"};
 
-    serializer.addData(makeData(10, "Hello", "world"));
+    /*serializer.addData(makeData(10, "Hello", "world"));
     serializer.addData(makeData(20, "First", "Project"));
 
     serializer.writeDataToFile(fileName);
@@ -44,11 +48,14 @@ int main()
     serializer.clearData();
 
     Q_ASSERT(serializer.count() == 0);
-
+    */
+    const size_t dataCount = 1;
     serializer.readDataFromFile(fileName, dataCount);
     Q_ASSERT(serializer.count() == dataCount);
 
     const Serializing::Data restoredData = serializer.getDataAt(0);
+    std::cout << "Console out: " << restoredData.posx << std::endl;
+
     Q_ASSERT(restoredData.attr == 10);
     Q_ASSERT(restoredData.text == "Hello");
     Q_ASSERT(restoredData.textmnemo == "world");
