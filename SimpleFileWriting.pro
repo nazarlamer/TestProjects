@@ -5,7 +5,5 @@ CONFIG -= qt
 
 SOURCES += \
         main.cpp \
-        mydata.cpp
 
 HEADERS += \
-    mydata.h
