@@ -9,6 +9,9 @@ int main()
 
     // file out:
     std::ofstream ofs{"myFileData.txt"}; // lock this file at binary folder
-    if (ofs.is_open())
+    if (ofs.is_open()) {
         ofs << myData;
+        std::cout << "Console out: " << "FILE REC" << std::endl;
+
+    }
 }
