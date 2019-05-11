@@ -1,56 +1,62 @@
-#include <iostream>
-#include <fstream>
-#include <QDataStream>
-#include <QFile>
-#include "mydata.h"
+#include <QString>
+#include "Serializing/dataserializer.h"
+#include "Serializing/data.h"
+
+Serializing::Data makeData(int multiplier, const QString &firstName, const QString & secondName)
+{
+    int initValue = 1 * multiplier;
+    Serializing::Data data;
+
+    data.posx = initValue;
+    data.posy = initValue;
+    data.status = initValue;
+    data.zalegn = initValue;
+    data.nomer = initValue;
+    data.kodv = initValue;
+    data.kodn = initValue;
+    data.kodab = initValue;
+    data.attr = initValue;
+    data.text = firstName;
+    data.textmnemo = secondName;
+    data.tmnpx = initValue;
+    data.tmnpy = initValue;
+    data.idsql = initValue;
+    data.vvodiv = initValue;
+    data.vv1 = initValue;
+    data.vv2 = initValue;
+    data.vv3 = initValue;
+    data.vv4 = initValue;
+    data.tupzalegn = initValue;
+
+    return data;
+}
 
 int main()
 {
-    const MyProject::MyData myData{35, "John", "Smitt"};
-    std::cout << "Console out: " << myData << std::endl;
+    Serializing::DataSerializer serializer;
+    const QString fileName{"storedData"};
 
-    // file out:
-    std::ofstream ofs{"myFileData.txt"}; // lock this file at binary folder
-    if (ofs.is_open()) {
-        ofs << myData;
-        std::cout << "Console out: " << "FILE REC" << std::endl;
-    }
+    serializer.addData(makeData(10, "Hello", "world"));
+    serializer.addData(makeData(20, "First", "Project"));
 
-    QFile file( "d:\\Askmem_3\\NV\\data\\vv.dat" );
-        if(file.open( QFile::ReadOnly ) )
-        {
+    serializer.writeDataToFile(fileName);
+    const size_t dataCount = serializer.count();
+    serializer.clearData();
 
-            QByteArray iContents = file.readAll();
-            std::cout << "Console out: " << iContents[0] << std::endl;
-            unsigned short i = (unsigned char) iContents.at(432);
-            std::cout << "Console out: " << i << std::endl;
-            file.seek(0);
-            QByteArray block = file.read(4);
+    Q_ASSERT(serializer.count() == 0);
 
+    serializer.readDataFromFile(fileName, dataCount);
+    Q_ASSERT(serializer.count() == dataCount);
 
+    const Serializing::Data restoredData = serializer.getDataAt(0);
+    Q_ASSERT(restoredData.attr == 10);
+    Q_ASSERT(restoredData.text == "Hello");
+    Q_ASSERT(restoredData.textmnemo == "world");
+    Q_ASSERT(restoredData.tmnpx == 10);
 
-            if(file.seek(4) )
-            {
-                char * dataRead = new char[ sizeof( qint32 ) ];
-                qint64 numBytesRead = file.read(dataRead, sizeof( qint32 ) );
-
-                if( numBytesRead == sizeof( qint32 ) )
-                {
-                    QByteArray dataBytes(dataRead);
-
-                    bool ok = false;
-                    qint32 value = dataBytes.toInt( &ok ); // "value" ends up 0
-
-                    if(ok)
-                    {
-                        int cout = value; // never gets here
-                        std::cout << "Console out: " << cout << std::endl;
-                    }else {
-                        std::cout << "Console out: " << "NOT JR" << std::endl;
-                    }
-                }
-            }
-        }else {
-            std::cout << "Console out: " << "NO FILE" << std::endl;
-        }
+    const Serializing::Data restoredData2 = serializer.getDataAt(1);
+    Q_ASSERT(restoredData2.attr == 20);
+    Q_ASSERT(restoredData2.text == "First");
+    Q_ASSERT(restoredData2.textmnemo == "Project");
+    Q_ASSERT(restoredData2.tmnpx == 20);
 }
