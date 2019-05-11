@@ -7,3 +7,4 @@ SOURCES += \
         main.cpp \
 
 HEADERS += \
+    Serializing/data.h \
