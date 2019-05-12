@@ -3,31 +3,36 @@
 
 #include "data.h"
 #include <vector>
+#include <memory>
 
 namespace Serializing
 {
 
+class FileReaderStrategy;
+
 class DataSerializer
 {
 public:
-    explicit DataSerializer(const std::vector<Data> &dataConteiner = {});
+    explicit DataSerializer(std::unique_ptr<FileReaderStrategy> fileReader);
 
     bool contains(const Data &data) const;
     void addData(const Data &data);
     void removeData(const Data &data);
-    void writeDataToFile(const QString &file) const;
-    void readDataFromFile(const QString &file, size_t count);
+    std::vector<Data> getData() const;
     Data getDataAt(size_t index) const;
     size_t count() const;
-    void clearData();
-    std::vector<Data> getData() const;
 
-private:
-    void writeData(QDataStream &stream, const Data &data) const;
-    void readData(QDataStream &stream, Data &data);
+    void writeDataToFile(const QString &fileName) const;
+    void readDataFromFile(const QString &fileName);
+
+    void clearData();
+
+public:
+    static void printData(const Data &data);
 
 private:
     std::vector<Data> _serializedData;
+    std::unique_ptr<FileReaderStrategy> _fileReader;
 };
 
 }
