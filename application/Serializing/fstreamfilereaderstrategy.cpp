@@ -38,94 +38,49 @@ void FStreamFileReaderStrategy::readDataFromFile(std::ifstream &stream, int coun
 
 void FStreamFileReaderStrategy::readData(std::ifstream &stream, Data &data)
 {
-//    int buffer[9] = {0}; // first 9 fields
-//    stream.read(reinterpret_cast<char*>(&buffer), 9);
-
-//    data.posx  =  buffer[0];
-//    data.posy  =  buffer[1];
-//    data.status = buffer[2];
-//    data.zalegn = buffer[3];
-//    data.nomer =  buffer[4];
-//    data.kodv =   buffer[5];
-//    data.kodn =   buffer[6];
-//    data.kodab =  buffer[7];
-//    data.attr =   buffer[8];
-
-//    // 2 text string
-//    char charBuffer1[100];
-//    char charBuffer2[255];
-//    stream.read(charBuffer1, 100);
-//    stream.read(charBuffer2, 255);
-//    data.text = QString::fromUtf8(charBuffer1);
-//    data.textmnemo = QString::fromUtf8(charBuffer2);
-
-//    for (int &i : buffer)
-//        i = 0;
-//    // last 9 fields
-//    stream.read(reinterpret_cast<char*>(&buffer), 9);
-//    data.tmnpx =    buffer[0];
-//    data.tmnpy =    buffer[1];
-//    data.idsql =    buffer[2];
-//    data.vvodiv =   buffer[3];
-//    data.vv1 =      buffer[4];
-//    data.vv2 =      buffer[5];
-//    data.vv3 =      buffer[6];
-//    data.vv4 =      buffer[7];
-//    data.tupzalegn = buffer[8];
-
-
-    int buffer = 0;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.posx  =  buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.posy  =  buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.status = buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.zalegn = buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.nomer =  buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.kodv =   buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.kodn =   buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.kodab =  buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.attr =   buffer;
+    data.posx  =  readInteger(stream);
+    data.posy  =  readInteger(stream);
+    data.status = readInteger(stream);
+    data.zalegn = readInteger(stream);
+    data.nomer =  readInteger(stream);
+    data.kodv =   readInteger(stream);
+    data.kodn =   readInteger(stream);
+    data.kodab =  readInteger(stream);
+    data.attr =   readInteger(stream);
 
     // 2 text string
-    char charBuffer1[100];
-    char charBuffer2[255];
-    stream.read(charBuffer1, 100);
-    stream.read(charBuffer2, 255);
-    data.text = QString::fromLocal8Bit(charBuffer1);
-    data.textmnemo = QString::fromLocal8Bit(charBuffer2);
+    data.text = readText(stream, 102);
+    data.textmnemo = readText(stream, 257);
 
     // last 9 fields
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.tmnpx =    buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.tmnpy =    buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.idsql =    buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.vvodiv =   buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.vv1 =      buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.vv2 =      buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.vv3 =      buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.vv4 =      buffer;
-    stream.read(reinterpret_cast<char*>(&buffer), sizeof (int));
-    data.tupzalegn = buffer;
+    data.tmnpx =   readInteger(stream);
+    data.tmnpy =   readInteger(stream);
+    data.idsql =   readInteger(stream);
+    data.vvodiv =  readInteger(stream);
+    data.vv1 =     readInteger(stream);
+    data.vv2 =     readInteger(stream);
+    data.vv3 =     readInteger(stream);
+    data.vv4 =     readInteger(stream);
+    data.tupzalegn = readInteger(stream);
 }
 
 void FStreamFileReaderStrategy::writeData(std::ofstream &stream, const Data &data) const
 {
 
+}
+
+int FStreamFileReaderStrategy::readInteger(std::ifstream &stream)
+{
+    int buffer = 0;
+    stream.read(reinterpret_cast<char*>(&buffer), sizeof (buffer));
+    return buffer;
+}
+
+QString FStreamFileReaderStrategy::readText(std::ifstream &stream, size_t textLength)
+{
+    char charBuffer[textLength];
+    stream.read(charBuffer, sizeof (charBuffer) / sizeof (char));
+    return QString::fromLocal8Bit(charBuffer).trimmed();
 }
 
 }

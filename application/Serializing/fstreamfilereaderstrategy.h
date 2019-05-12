@@ -22,6 +22,10 @@ private:
     void writeData(std::ofstream &stream, const Data &data) const;
 
 private:
+    static int readInteger(std::ifstream &stream);
+    static QString readText(std::ifstream &stream, size_t textLength);
+
+private:
     std::vector<Data> _data;
 };
 
