@@ -5,8 +5,8 @@ QT += core
 
 SOURCES += \
         Serializing/dataserializer.cpp \
-        main.cpp
+        main.cpp \
 
 HEADERS += \
     Serializing/data.h \
-    Serializing/dataserializer.h
+    Serializing/dataserializer.h \
