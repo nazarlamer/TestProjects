@@ -3,10 +3,12 @@
 
 #include <gtest/gtest.h>
 #include <QFile>
+#include <QDebug>
 #include "Serializing/data.h"
 #include "Serializing/dataserializer.h"
 
 const QString fileName{"serializedDataFile"};
+const QString dataFile{"vv.dat"};
 
 Serializing::Data makeTestData(int multiplier, const QString &firstName, const QString & secondName)
 {
@@ -37,6 +39,7 @@ Serializing::Data makeTestData(int multiplier, const QString &firstName, const Q
     return data;
 }
 
+/*
 TEST(SerializingTest, writeDataToFile_fileExist)
 {
     Serializing::DataSerializer serializer;
@@ -73,7 +76,7 @@ TEST(SerializingTest, writeAdnReadDataFromFile_dataAreReadCorrect)
 
     EXPECT_EQ(serializer.count(), 0);
 
-    serializer.readDataFromFile(fileName, dataCount);
+    serializer.readDataFromFile(fileName);
     EXPECT_EQ(serializer.count(), dataCount);
 
     const Serializing::Data restoredData1 = serializer.getDataAt(0);
@@ -88,6 +91,23 @@ TEST(SerializingTest, writeAdnReadDataFromFile_dataAreReadCorrect)
     EXPECT_EQ(restoredData2.textmnemo, "Project");
     EXPECT_EQ(restoredData2.tmnpx, 20);
     file.remove();
+}
+
+*/
+TEST(SerializingTest, vvdatFileExistTest)
+{
+    const QFile file{dataFile};
+    EXPECT_TRUE(file.exists());
+}
+
+TEST(SerializingTest, read_vvdatFile_dataAreReadCorrect)
+{
+    const QFile file{dataFile};
+    Serializing::DataSerializer serializer;
+    serializer.setSerializingMode(Serializing::SerializingMode::CharMode);
+    serializer.readDataFromFile(file.fileName());
+
+    EXPECT_GT(serializer.count(), 100);
 }
 
 #endif // SERIALIZINGTEST_H

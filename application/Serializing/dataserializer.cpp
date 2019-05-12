@@ -30,20 +30,33 @@ void DataSerializer::writeDataToFile(const QString &fileName) const
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
 
+    out << _serializedData.size();
     for (const auto &data : _serializedData)
         writeData(out, data);
 }
 
-void DataSerializer::readDataFromFile(const QString &fileName, size_t count)
+void DataSerializer::readDataFromFile(const QString &fileName)
 {
     QFile file{fileName};
     file.open(QIODevice::ReadOnly);
     QDataStream in(&file);
 
+    // read data length first
+    int dataLength = 0;
+    in >> dataLength;
+    readDataFromFile(in, static_cast<size_t>(dataLength));
+}
+
+void DataSerializer::readDataFromFile(QDataStream &stream, size_t count)
+{
     for (size_t i = 0; i < count; ++i)
     {
         Data data;
-        readData(in, data);
+        if (_mode == SerializingMode::CharMode)
+            readOldDataImpl(stream, data);
+        else
+            readDataImpl(stream, data);
+
         addData(data);
     }
 }
@@ -55,6 +68,11 @@ size_t DataSerializer::count() const { return _serializedData.size(); }
 void DataSerializer::clearData() { _serializedData.clear(); }
 
 std::vector<Data> DataSerializer::getData() const { return _serializedData; }
+
+void DataSerializer::setSerializingMode(SerializingMode mode)
+{
+    _mode = mode;
+}
 
 void DataSerializer::writeData(QDataStream &stream, const Data &data) const
 {
@@ -80,7 +98,7 @@ void DataSerializer::writeData(QDataStream &stream, const Data &data) const
            << data.tupzalegn;
 }
 
-void DataSerializer::readData(QDataStream &stream, Data &data)
+void DataSerializer::readDataImpl(QDataStream &stream, Data &data)
 {
     stream >> data.posx
            >> data.posy
@@ -94,6 +112,41 @@ void DataSerializer::readData(QDataStream &stream, Data &data)
            >> data.text
            >> data.textmnemo
            >> data.tmnpx
+           >> data.tmnpy
+           >> data.idsql
+           >> data.vvodiv
+           >> data.vv1
+           >> data.vv2
+           >> data.vv3
+           >> data.vv4
+           >> data.tupzalegn;
+}
+
+void DataSerializer::readOldDataImpl(QDataStream &stream, Data &data)
+{
+    stream >> data.posx
+           >> data.posy
+           >> data.status
+           >> data.zalegn
+           >> data.nomer
+           >> data.kodv
+           >> data.kodn
+           >> data.kodab
+           >> data.attr;
+
+
+    char* raw;
+    uint length;
+    stream.readBytes(raw, length);
+//    QByteArray rawText;
+//    stream.readRawData(rawText.data(), 99);
+//    data.text = QString::fromUtf8(rawText);
+//    rawText.clear();
+
+//    stream.readRawData(rawText.data(), 254);
+//    data.textmnemo = QString::fromUtf8(rawText);
+
+    stream >> data.tmnpx
            >> data.tmnpy
            >> data.idsql
            >> data.vvodiv
