@@ -1,13 +1,14 @@
 #include <QString>
-#include "Serializing/dataserializer.h"
-#include "Serializing/data.h"
-#include <iostream>
-#include <fstream>
-#include <QDataStream>
-#include <QFile>
-#include <QTextCodec>
-#include<QDebug>
-using namespace std;
+//#include "Serializing/dataserializer.h"
+//#include "Serializing/data.h"
+//#include <iostream>
+//#include <fstream>
+//#include <QDataStream>
+//#include <QFile>
+//#include <QTextCodec>
+//#include <QDebug>
+
+//using namespace std;
 
 struct DataStryct
 {
