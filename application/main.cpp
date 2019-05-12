@@ -1,17 +1,16 @@
 #include <QDebug>
-#include <QFile>
-#include <QDataStream>
+#include "Serializing/dataserializer.h"
+#include "Serializing/fstreamfilereaderstrategy.h"
 
 #include <fstream>
+#include <memory>
 
 int main()
 {
-    const QString testFile{"test.dat"};
-    std::ifstream fstream(testFile.toStdString(), std::ios::binary|std::ios::in);
-    int value = 0;
-    if (fstream.is_open())
-    {
-        fstream.read(reinterpret_cast<char*>(&value), sizeof(int));
-        qDebug() << value;
-    }
+    const QString dataFile{"vv.dat"};
+    Serializing::DataSerializer serializer{std::make_unique<Serializing::FStreamFileReaderStrategy>()};
+    serializer.readDataFromFile(dataFile);
+
+    for (const Serializing::Data &data : serializer.getData())
+        Serializing::DataSerializer::printData(data);
 }

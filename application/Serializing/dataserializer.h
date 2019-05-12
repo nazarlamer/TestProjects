@@ -3,41 +3,36 @@
 
 #include "data.h"
 #include <vector>
+#include <memory>
 
 namespace Serializing
 {
 
-enum class SerializingMode
-{
-    QStringMode,
-    CharMode // for reading old files
-};
+class FileReaderStrategy;
 
 class DataSerializer
 {
 public:
-    explicit DataSerializer(const std::vector<Data> &dataConteiner = {});
+    explicit DataSerializer(std::unique_ptr<FileReaderStrategy> fileReader);
 
     bool contains(const Data &data) const;
     void addData(const Data &data);
     void removeData(const Data &data);
-    void writeDataToFile(const QString &fileName) const;
-    void readDataFromFile(const QString &fileName);
+    std::vector<Data> getData() const;
     Data getDataAt(size_t index) const;
     size_t count() const;
-    void clearData();
-    std::vector<Data> getData() const;
-    void setSerializingMode(SerializingMode mode);
 
-private:
-    void readDataFromFile(QDataStream &stream, size_t count);
-    void writeData(QDataStream &stream, const Data &data) const;
-    void readDataImpl(QDataStream &stream, Data &data);
-    void readOldDataImpl(QDataStream &stream, Data &data);
+    void writeDataToFile(const QString &fileName) const;
+    void readDataFromFile(const QString &fileName);
+
+    void clearData();
+
+public:
+    static void printData(const Data &data);
 
 private:
     std::vector<Data> _serializedData;
-    SerializingMode _mode{SerializingMode::QStringMode};
+    std::unique_ptr<FileReaderStrategy> _fileReader;
 };
 
 }

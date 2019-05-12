@@ -3,9 +3,13 @@
 
 #include <gtest/gtest.h>
 #include <QFile>
-#include <QDebug>
+#include <memory>
 #include "Serializing/data.h"
 #include "Serializing/dataserializer.h"
+#include "Serializing/qdatastreamfilereaderstrategy.h"
+#include "Serializing/fstreamfilereaderstrategy.h"
+
+#include <QDebug>
 
 const QString fileName{"serializedDataFile"};
 const QString dataFile{"vv.dat"};
@@ -39,10 +43,9 @@ Serializing::Data makeTestData(int multiplier, const QString &firstName, const Q
     return data;
 }
 
-/*
 TEST(SerializingTest, writeDataToFile_fileExist)
 {
-    Serializing::DataSerializer serializer;
+    Serializing::DataSerializer serializer{std::make_unique<Serializing::QDataStreamFileReaderStrategy>()};
 
     QFile file{fileName};
     if (file.exists())
@@ -59,7 +62,7 @@ TEST(SerializingTest, writeDataToFile_fileExist)
 
 TEST(SerializingTest, writeAdnReadDataFromFile_dataAreReadCorrect)
 {
-    Serializing::DataSerializer serializer;
+    Serializing::DataSerializer serializer{std::make_unique<Serializing::QDataStreamFileReaderStrategy>()};
 
     serializer.addData(makeTestData(10, "Hello", "world"));
     serializer.addData(makeTestData(20, "First", "Project"));
@@ -93,7 +96,6 @@ TEST(SerializingTest, writeAdnReadDataFromFile_dataAreReadCorrect)
     file.remove();
 }
 
-*/
 TEST(SerializingTest, vvdatFileExistTest)
 {
     const QFile file{dataFile};
@@ -103,11 +105,14 @@ TEST(SerializingTest, vvdatFileExistTest)
 TEST(SerializingTest, read_vvdatFile_dataAreReadCorrect)
 {
     const QFile file{dataFile};
-    Serializing::DataSerializer serializer;
-    serializer.setSerializingMode(Serializing::SerializingMode::CharMode);
+    Serializing::DataSerializer serializer{std::make_unique<Serializing::FStreamFileReaderStrategy>()};
     serializer.readDataFromFile(file.fileName());
 
-    EXPECT_GT(serializer.count(), 100);
+    EXPECT_EQ(serializer.count(), 26);
+
+    Serializing::DataSerializer::printData(serializer.getDataAt(0));
+    Serializing::DataSerializer::printData(serializer.getDataAt(2));
+    Serializing::DataSerializer::printData(serializer.getDataAt(3));
 }
 
 #endif // SERIALIZINGTEST_H
