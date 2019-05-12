@@ -1,9 +1,7 @@
 #include <QDebug>
+#include <memory>
 #include "Serializing/dataserializer.h"
 #include "Serializing/fstreamfilereaderstrategy.h"
-
-#include <fstream>
-#include <memory>
 
 int main()
 {

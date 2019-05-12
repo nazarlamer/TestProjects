@@ -11,7 +11,7 @@ SOURCES += \
 
 HEADERS += \
     Serializing/data.h \
-    Serializing/dataserializer.h \ \
+    Serializing/dataserializer.h \
     Serializing/filereader.h \
     Serializing/fstreamfilereaderstrategy.h \
-    Serializing/qdatastreamfilereaderstrategy.h
+    Serializing/qdatastreamfilereaderstrategy.h \
