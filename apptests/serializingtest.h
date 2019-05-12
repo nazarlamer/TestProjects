@@ -9,8 +9,6 @@
 #include "Serializing/qdatastreamfilereaderstrategy.h"
 #include "Serializing/fstreamfilereaderstrategy.h"
 
-#include <QDebug>
-
 const QString fileName{"serializedDataFile"};
 const QString dataFile{"vv.dat"};
 
@@ -110,9 +108,11 @@ TEST(SerializingTest, read_vvdatFile_dataAreReadCorrect)
 
     EXPECT_EQ(serializer.count(), 26);
 
-    Serializing::DataSerializer::printData(serializer.getDataAt(0));
-    Serializing::DataSerializer::printData(serializer.getDataAt(2));
-    Serializing::DataSerializer::printData(serializer.getDataAt(3));
+    EXPECT_EQ(serializer.getDataAt(0).text, "Шевченка, 50");
+    EXPECT_EQ(serializer.getDataAt(0).textmnemo, "50");
+
+    EXPECT_EQ(serializer.getDataAt(24).text, "яяяя");
+    EXPECT_EQ(serializer.getDataAt(24).textmnemo, "");
 }
 
 #endif // SERIALIZINGTEST_H
